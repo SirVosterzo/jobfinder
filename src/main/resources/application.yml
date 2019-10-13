@@ -1,0 +1,4 @@
+mongoDB:
+   config:
+      host: 'localhost'
+      database: 'JobFinder'
