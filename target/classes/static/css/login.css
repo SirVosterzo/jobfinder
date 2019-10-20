@@ -1,0 +1,44 @@
+:root { -
+	-backgroud: #6363CE; -
+	-card-background: #CED3DC;
+}
+
+body {
+	background: white !important;
+	font-family: 'PT Sans', sans-serif !important;
+	color: #CED3DC !important;
+}
+
+.container {
+	height: 100vh;
+}
+
+.row {
+	height: 100%;
+}
+
+.nav-link {
+	color: #CED3DC !important;
+}
+
+#workersInfo {
+	margin-top: 5%;
+}
+
+.card {
+	border: none;
+	padding: 10px;
+	color: black;
+}
+
+.checked {
+	color: orange;
+}
+
+.card img {
+	border-radius: 50%;
+}
+
+.error {
+	color: red
+}

@@ -9,7 +9,7 @@
 <body>
 Register OK.
 <script>
-	setTimeout(function() {window.location.href = "http://www.w3schools.com";}, 2000);
+	setTimeout(function() {window.location.href = "/";}, 2000);
 </script>
 </body>
 </html>

@@ -5,3 +5,34 @@
 	border-radius: 7px;
 	padding: 20px;
 }
+
+:root { -
+	-backgroud: #6363CE; -
+	-card-background: #CED3DC;
+}
+
+body {
+	background: white;
+}
+
+.container {
+	margin-top: 50px;
+}
+
+.card {
+	transition: box-shadow .3s;
+	background: #fff;
+	margin-bottom: 20px;
+}
+
+.card:hover {
+	box-shadow: 0 0 11px grey;
+}
+
+.checked {
+	color: orange;
+}
+
+.card img {
+	border-radius: 50%;
+}

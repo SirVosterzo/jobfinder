@@ -6,11 +6,11 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import lombok.Data;
+
+@Data
 public class RegisterRequest implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2976136566068774558L;
 
 	@NotNull(message = "Username cannot be null")
@@ -21,29 +21,24 @@ public class RegisterRequest implements Serializable {
 	@NotBlank(message = "Password cannot be blank")
 	private String password;
 
-	public String getUsername() {
-		return username;
-	}
+	@NotNull(message = "name cannot be null")
+	@NotBlank(message = "name cannot be blank")
+	private String name;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+	@NotNull(message = "surname cannot be null")
+	@NotBlank(message = "surname cannot be blank")
+	private String surname;
 
-	public String getPassword() {
-		return password;
-	}
+	@NotNull(message = "email cannot be null")
+	@NotBlank(message = "email cannot be blank")
+	private String email;
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+	@NotNull(message = "birthday cannot be null")
+	@NotBlank(message = "birthday cannot be blank")
+	private String birthday;
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	@Override
-	public String toString() {
-		return "RegisterRequest [username=" + username + ", password=" + password + "]";
-	}
+	@NotNull(message = "gender cannot be null")
+	@NotBlank(message = "gender cannot be blank")
+	private String gender;
 
 }

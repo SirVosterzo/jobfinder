@@ -1,11 +1,12 @@
 package jobfinder.controller;
 
-import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,44 +15,47 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import jobfinder.controller.dto.login.LoginRequest;
 import jobfinder.controller.dto.register.RegisterRequest;
+import jobfinder.exception.AuthenticationException;
 import jobfinder.exception.EncryptionException;
 import jobfinder.exception.UsernameTakenException;
 import jobfinder.model.User;
 import jobfinder.service.UserService;
 import jobfinder.util.Constants;
-import jobfinder.util.CustomValidator;
 import jobfinder.util.JspPath;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@Slf4j
 public class IndexController extends HttpServlet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8893168491065503534L;
 
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private ModelMapper modelMapper;
+
 	@GetMapping("/")
 	public String index(HttpServletRequest request) {
 		try {
-			processIndex(request);
+			checkUserSession(request);
 		} catch (AuthenticationException e) {
+			log.info("[ROUTE] Navigating to login.");
 			return JspPath.LOGIN;
 		}
 		return "redirect:/" + JspPath.DASHBOARD;
 	}
 
 	@PostMapping("/login")
-	public String login(LoginRequest loginRequest, HttpServletRequest request) {
+	public String login(@Valid LoginRequest loginRequest, HttpServletRequest request) {
 
 		try {
 
-			CustomValidator.validate(loginRequest);
 			processLogin(loginRequest, request);
 
 		} catch (ValidationException | AuthenticationException e) {
+			log.error("Error: {}", e.getMessage());
 			request.setAttribute("exception", e);
 			return JspPath.NOPE;
 		}
@@ -60,10 +64,9 @@ public class IndexController extends HttpServlet {
 	}
 
 	@PostMapping("/register")
-	public String register(RegisterRequest registerRequest, Model model) {
+	public String register(@Valid RegisterRequest registerRequest, Model model) {
 		try {
 
-			CustomValidator.validate(registerRequest);
 			processRegister(registerRequest);
 
 		} catch (UsernameTakenException | EncryptionException e) {
@@ -80,11 +83,6 @@ public class IndexController extends HttpServlet {
 		return JspPath.REGISTER;
 	}
 
-	@GetMapping("/profile")
-	public String profile() {
-		return JspPath.PROFILE;
-	}
-
 	private void processLogin(LoginRequest loginRequest, HttpServletRequest request) throws AuthenticationException {
 		String username = loginRequest.getUsername();
 		String password = loginRequest.getPassword();
@@ -96,7 +94,7 @@ public class IndexController extends HttpServlet {
 		storeUser(request.getSession(), user);
 	}
 
-	private void processIndex(HttpServletRequest request) throws AuthenticationException {
+	private void checkUserSession(HttpServletRequest request) throws AuthenticationException {
 		User user = (User) request.getSession().getAttribute(Constants.USER);
 		if (user == null) {
 			throw new AuthenticationException();
@@ -104,9 +102,8 @@ public class IndexController extends HttpServlet {
 	}
 
 	private void processRegister(RegisterRequest registerRequest) throws UsernameTakenException, EncryptionException {
-		String username = registerRequest.getUsername();
-		String password = registerRequest.getPassword();
-		userService.register(new User(username, password));
+		User user = modelMapper.map(registerRequest, User.class);
+		userService.register(user);
 	}
 
 	private void storeUser(HttpSession session, User user) {

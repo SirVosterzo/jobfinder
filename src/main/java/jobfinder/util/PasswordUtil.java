@@ -9,8 +9,13 @@ import java.util.Optional;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import javax.naming.AuthenticationException;
 
+import org.springframework.http.HttpStatus;
+
+import jobfinder.exception.AuthenticationException;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class PasswordUtil {
 
 	private static final SecureRandom RAND = new SecureRandom();
@@ -25,7 +30,7 @@ public class PasswordUtil {
 	public static Optional<String> generateSalt(final int length) {
 
 		if (length < 1) {
-			System.err.println("error in generateSalt: length must be > 0");
+			log.error("error in generateSalt: length must be > 0");
 			return Optional.empty();
 		}
 
@@ -50,7 +55,7 @@ public class PasswordUtil {
 			return Optional.of(Base64.getEncoder().encodeToString(securePassword));
 
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
-			System.err.println("Exception encountered in hashPassword()");
+			log.error("Exception encountered in hashPassword(): {}", ex.getMessage());
 			return Optional.empty();
 
 		} finally {
@@ -58,11 +63,12 @@ public class PasswordUtil {
 		}
 	}
 
-	public static boolean verifyPassword(String password, String key, String salt) throws AuthenticationException {
+	public static void verifyPassword(String password, String key, String salt) throws AuthenticationException {
 		Optional<String> optEncrypted = hashPassword(password, salt);
-		if (!optEncrypted.isPresent())
-			throw new AuthenticationException("Password is incorrect.");
-		return optEncrypted.get().equals(key);
+		if (!optEncrypted.isPresent() || !optEncrypted.get().equals(key)) {
+			throw new AuthenticationException(HttpStatus.BAD_REQUEST, "Password is incorrect.");
+		}
+		log.debug("[INFO ] Password is correct.");
 	}
 
 }

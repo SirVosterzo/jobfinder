@@ -1,7 +1,13 @@
 package jobfinder.entity;
 
-public class EncryptedPassword {
+import java.io.Serializable;
 
+import lombok.Data;
+
+@Data
+public class EncryptedPassword implements Serializable {
+
+	private static final long serialVersionUID = -476247509710548449L;
 	private String key;
 	private String salt;
 
@@ -10,26 +16,4 @@ public class EncryptedPassword {
 		this.key = key;
 		this.salt = salt;
 	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public String getSalt() {
-		return salt;
-	}
-
-	public void setSalt(String salt) {
-		this.salt = salt;
-	}
-
-	@Override
-	public String toString() {
-		return "EncryptedPassword [key=" + key + ", salt=" + salt + "]";
-	}
-
 }
